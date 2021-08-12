@@ -3,12 +3,22 @@ const ClientError = require('../../exception/ClientError');
 
 /* eslint-disable no-underscore-dangle */
 class openMusicHandler {
-  constructor(service) {
+  constructor(service, validator) {
     this._service = service;
+    this._validator = validator;
+
+    this.postSongHandler.bind(this);
+    this.getSongsHandler.bind(this);
+    this.getSongByIdHandler.bind(this);
+    this.putSongByIdHandler.bind(this);
+    this.deleteSongByIdHandler.bind(this);
   }
 
   async postSongHandler(request, h) {
     try {
+      // validate data payload
+      this._validator.validateSongPayload(request.payload);
+
       const {
         title,
         year,
@@ -102,6 +112,9 @@ class openMusicHandler {
 
   async putSongByIdHandler(request, h) {
     try {
+      // validate data payload
+      this._validator.validateSongPayload(request.payload);
+
       const { songId: id } = request.params;
       const {
         title,
