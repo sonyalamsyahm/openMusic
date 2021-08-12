@@ -10,7 +10,7 @@ class openMusicService {
     this._pool = new Pool();
   }
 
-  async addMusic({
+  async addSong({
     title,
     year,
     performer,
@@ -35,12 +35,12 @@ class openMusicService {
     return result.rows[0].id;
   }
 
-  async getMusics() {
+  async getSongs() {
     const result = await this._pool.query('SELECT * FROM musics');
     return result.rows.map(mapDBToModel); // PERLU PENYESUAIAN MAPDBToModel nya agar sesuai kriteria
   }
 
-  async getMusicById(id) {
+  async getSongById(id) {
     const query = {
       text: 'SELECT * FROM musics WHERE id = $1',
       values: [id],
@@ -75,7 +75,7 @@ class openMusicService {
     }
   }
 
-  async deleteMusicById(id) {
+  async deleteSongById(id) {
     const query = {
       text: 'DELETE FROM musics WHERE id = $1 RETURNING id',
       values: [id],
