@@ -19,4 +19,10 @@ const mapDBToModel = ({
   updatedAt: updated_at,
 });
 
-module.exports = { mapDBToModel };
+const mapDBToFilteredModel = (item) => ({
+  id: item.id,
+  title: item.title,
+  performer: item.performer,
+});
+
+module.exports = { mapDBToModel, mapDBToFilteredModel };

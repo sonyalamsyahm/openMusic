@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 const nanoid = require('nanoid');
 const { Pool } = require('pg');
-const { mapDBToModel } = require('../../utils');
+const { mapDBToModel, mapDBToFilteredModel } = require('../../utils');
 const InvariantError = require('../../exception/InvariantError');
 const NotFoundError = require('../../exception/NotFoundError');
 
@@ -37,7 +37,7 @@ class openMusicService {
 
   async getSongs() {
     const result = await this._pool.query('SELECT * FROM musics');
-    return result.rows.map(mapDBToModel); // PERLU PENYESUAIAN MAPDBToModel nya agar sesuai kriteria
+    return result.rows.map(mapDBToFilteredModel);
   }
 
   async getSongById(id) {
