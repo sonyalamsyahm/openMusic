@@ -54,7 +54,7 @@ class OpenMusicHandler {
         return response;
       }
 
-      // Server Error Execption Handler
+      // Server Error Exception Handler
       const response = h.response({
         status: 'error',
         message: 'Maaf, terjadi kesalahan pada server kami.',
@@ -97,7 +97,7 @@ class OpenMusicHandler {
         return response;
       }
 
-      // Server Error Execption Handler
+      // Server Error Exception Handler
       const response = h.response({
         status: 'error',
         message: 'Maaf, terjadi kesalahan pada server kami.',
@@ -149,7 +149,7 @@ class OpenMusicHandler {
         return response;
       }
 
-      // Server Error Execption Handler
+      // Server Error Exception Handler
       const response = h.response({
         status: 'error',
         message: 'Maaf, terjadi kesalahan pada server kami.',
@@ -184,7 +184,7 @@ class OpenMusicHandler {
         return response;
       }
 
-      // Server Error Execption Handler
+      // Server Error Exception Handler
       const response = h.response({
         status: 'error',
         message: 'Maaf, terjadi kesalahan pada server kami.',
