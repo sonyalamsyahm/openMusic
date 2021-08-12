@@ -2,16 +2,16 @@
 const ClientError = require('../../exception/ClientError');
 
 /* eslint-disable no-underscore-dangle */
-class openMusicHandler {
+class OpenMusicHandler {
   constructor(service, validator) {
     this._service = service;
     this._validator = validator;
 
-    this.postSongHandler.bind(this);
-    this.getSongsHandler.bind(this);
-    this.getSongByIdHandler.bind(this);
-    this.putSongByIdHandler.bind(this);
-    this.deleteSongByIdHandler.bind(this);
+    this.postSongHandler = this.postSongHandler.bind(this);
+    this.getSongsHandler = this.getSongsHandler.bind(this);
+    this.getSongByIdHandler = this.getSongByIdHandler.bind(this);
+    this.putSongByIdHandler = this.putSongByIdHandler.bind(this);
+    this.deleteSongByIdHandler = this.deleteSongByIdHandler.bind(this);
   }
 
   async postSongHandler(request, h) {
@@ -124,7 +124,7 @@ class openMusicHandler {
         duration,
       } = request.payload;
 
-      await this._service.editMusicById(id, {
+      await this._service.editSongById(id, {
         title,
         year,
         performer,
@@ -198,4 +198,4 @@ class openMusicHandler {
   }
 }
 
-module.exports = openMusicHandler;
+module.exports = OpenMusicHandler;
