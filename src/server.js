@@ -6,6 +6,10 @@ const openMusicValidator = require('./validation/openMusic');
 
 require('dotenv').config();
 
+// Config dalam .env merupakan config development dimana HOST masih localhost
+// Dalam submission tidak dicantumkan untuk membuat config untuk production jadi tidak saya buat
+// Saya lampiran file .env untuk memastikan kesesuian dengan kriteria submission
+
 const init = async () => {
   const openMusicService = new OpenMusicService();
 
