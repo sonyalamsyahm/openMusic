@@ -1,7 +1,7 @@
 const { userPayloadSchema } = require('./schema');
 const InvariantError = require('../../exception/InvariantError');
 
-const userValidator = {
+const UserValidator = {
   validateUserPayload: (payload) => {
     const validationResult = userPayloadSchema.validate(payload);
 
@@ -11,4 +11,4 @@ const userValidator = {
   },
 };
 
-module.exports = userValidator;
+module.exports = UserValidator;
