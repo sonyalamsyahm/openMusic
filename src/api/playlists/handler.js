@@ -11,6 +11,7 @@ class PlaylistsHandler {
     this.getPlaylistsHandler = this.getPlaylistsHandler.bind(this);
     this.deletePlaylistsHandler = this.deletePlaylistsHandler.bind(this);
     this.postPlaylistAddSongHandler = this.postPlaylistAddSongHandler.bind(this);
+    this.getPlaylistSongsByPlaylistId = this.getPlaylistSongsByPlaylistId.bind(this);
   }
 
   async postPlaylistHandler(request, h) {
@@ -73,6 +74,19 @@ class PlaylistsHandler {
     });
     response.code(201);
     return response;
+  }
+
+  async getPlaylistSongsByPlaylistId(request) {
+    const { playlistId: id } = request.params;
+    const { id: owner } = request.auth.credentials;
+
+    await this._playlistsService.verifyPlaylistOwner(id, owner);
+    const songs = await this._playlistsService.getSongsByPlaylistId(id);
+
+    return {
+      status: 'success',
+      data: { songs },
+    };
   }
 }
 
