@@ -67,12 +67,24 @@ class OpenMusicHandler {
     }
   }
 
-  async getSongsHandler() {
-    const songs = await this._service.getSongs();
-    return {
-      status: 'success',
-      data: { songs },
-    };
+  async getSongsHandler(h) {
+    try {
+      const songs = await this._service.getSongs();
+      return {
+        status: 'success',
+        data: { songs },
+      };
+    } catch (error) {
+      console.error(error);
+
+      const response = h.response({
+        status: 'error',
+        message: 'Maaf, terjadi kesalahan pada server kami.',
+      });
+
+      response.code(500);
+      return response;
+    }
   }
 
   async getSongByIdHandler(request, h) {
