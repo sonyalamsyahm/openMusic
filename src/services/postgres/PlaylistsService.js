@@ -72,6 +72,19 @@ class PlaylistsService {
       throw new AuthorizationError('Anda tidak berhak mengakses resource ini');
     }
   }
+
+  async addSongToPlaylist({ playlistId, songId }) {
+    const id = `ps-${nanoid(16)}`;
+    /* apakah perlu query untuk check duplikasi? data tidak akan masuk walau duplikat
+    karena ada contstrant unique untuk song_id dan playlist_id, tetapi status code
+    akan menjadi 500 dan message menjadi kesalahan internal bukan dari client */
+    const query = {
+      text: 'INSERT INTO playlistsongs VALUES($1, $2, $3)',
+      values: [id, playlistId, songId],
+    };
+
+    await this._pool.query(query);
+  }
 }
 
 module.exports = PlaylistsService;
