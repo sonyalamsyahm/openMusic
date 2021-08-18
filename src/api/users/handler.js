@@ -1,5 +1,5 @@
 /* eslint no-underscore-dangle: ["error", { "allow": ["_service", _validator] }] */
-// const ClientError = require('../../exception/ClientError');
+const ClientError = require('../../exception/ClientError');
 
 class UsersHandler {
   constructor(service, validator) {
@@ -10,17 +10,33 @@ class UsersHandler {
   }
 
   async postUserHandler(request, h) {
-    this._validator.validateUserPayload(request.payload);
-    const { username, password, fullname } = request.payload;
-    const userId = await this._service.addUser({ username, password, fullname });
-    const response = h.response({
-      status: 'success',
-      message: 'User berhasil ditambahkan',
-      data: { userId },
-    });
+    try {
+      this._validator.validateUserPayload(request.payload);
+      const { username, password, fullname } = request.payload;
+      const userId = await this._service.addUser({ username, password, fullname });
+      const response = h.response({
+        status: 'success',
+        message: 'User berhasil ditambahkan',
+        data: { userId },
+      });
 
-    response.code(201);
-    return response;
+      response.code(201);
+      return response;
+    } catch (error) {
+      if (error instanceof ClientError) {
+        throw error;
+      }
+
+      // Server Error
+      const response = h.response({
+        status: 'error',
+        message: 'Maaf, terjadi kesalahan pada server kami.',
+      });
+
+      response.code(500);
+      console.error(error);
+      return response;
+    }
   }
 }
 

@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 const ClientError = require('../../exception/ClientError');
 
 /* eslint-disable no-underscore-dangle */
@@ -18,7 +17,6 @@ class OpenMusicHandler {
     try {
       // validate data payload
       this._validator.validateSongPayload(request.payload);
-
       const {
         title,
         year,
@@ -45,24 +43,17 @@ class OpenMusicHandler {
       return response;
     } catch (error) {
       if (error instanceof ClientError) {
-        const response = h.response({
-          status: 'fail',
-          message: error.message,
-        });
-
-        response.code(error.statusCode);
-        return response;
+        throw error;
       }
 
-      // Server Error Exception Handler
+      // Server Error
       const response = h.response({
         status: 'error',
         message: 'Maaf, terjadi kesalahan pada server kami.',
       });
 
-      console.error(error);
-
       response.code(500);
+      console.error(error);
       return response;
     }
   }
@@ -75,14 +66,18 @@ class OpenMusicHandler {
         data: { songs },
       };
     } catch (error) {
-      console.error(error);
+      if (error instanceof ClientError) {
+        throw error;
+      }
 
+      // Server Error
       const response = h.response({
         status: 'error',
         message: 'Maaf, terjadi kesalahan pada server kami.',
       });
 
       response.code(500);
+      console.error(error);
       return response;
     }
   }
@@ -100,24 +95,17 @@ class OpenMusicHandler {
       return response;
     } catch (error) {
       if (error instanceof ClientError) {
-        const response = h.response({
-          status: 'fail',
-          message: error.message,
-        });
-
-        response.code(error.statusCode);
-        return response;
+        throw error;
       }
 
-      // Server Error Exception Handler
+      // Server Error
       const response = h.response({
         status: 'error',
         message: 'Maaf, terjadi kesalahan pada server kami.',
       });
 
-      console.error(error);
-
       response.code(500);
+      console.error(error);
       return response;
     }
   }
@@ -152,24 +140,17 @@ class OpenMusicHandler {
       return response;
     } catch (error) {
       if (error instanceof ClientError) {
-        const response = h.response({
-          status: 'fail',
-          message: error.message,
-        });
-
-        response.code(error.statusCode);
-        return response;
+        throw error;
       }
 
-      // Server Error Exception Handler
+      // Server Error
       const response = h.response({
         status: 'error',
         message: 'Maaf, terjadi kesalahan pada server kami.',
       });
 
-      console.error(error);
-
       response.code(500);
+      console.error(error);
       return response;
     }
   }
@@ -187,24 +168,17 @@ class OpenMusicHandler {
       return response;
     } catch (error) {
       if (error instanceof ClientError) {
-        const response = h.response({
-          status: 'fail',
-          message: error.message,
-        });
-
-        response.code(error.statusCode);
-        return response;
+        throw error;
       }
 
-      // Server Error Exception Handler
+      // Server Error
       const response = h.response({
         status: 'error',
         message: 'Maaf, terjadi kesalahan pada server kami.',
       });
 
-      console.error(error);
-
       response.code(500);
+      console.error(error);
       return response;
     }
   }

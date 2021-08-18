@@ -1,6 +1,8 @@
 /* eslint no-underscore-dangle:
   ["error", { "allow": [_usersService, _authenticationsService, _tokenManager,  _validator] }] */
 
+const ClientError = require('../../exception/ClientError');
+
 class AuthenticationsHandler {
   constructor(authenticationsService, usersService, tokenManager, validator) {
     this._authenticationsService = authenticationsService;
@@ -14,52 +16,100 @@ class AuthenticationsHandler {
   }
 
   async postAuthenticationHandler(request, h) {
-    this._validator.validatePostAuthenticationPayload(request.payload);
-    const { username, password } = request.payload;
-    const id = await this._usersService.verifyUserCredential(username, password);
+    try {
+      this._validator.validatePostAuthenticationPayload(request.payload);
+      const { username, password } = request.payload;
+      const id = await this._usersService.verifyUserCredential(username, password);
 
-    const accessToken = this._tokenManager.generateAccessToken({ id });
-    const refreshToken = this._tokenManager.generateRefreshToken({ id });
+      const accessToken = this._tokenManager.generateAccessToken({ id });
+      const refreshToken = this._tokenManager.generateRefreshToken({ id });
 
-    await this._authenticationsService.addRefreshToken(refreshToken);
+      await this._authenticationsService.addRefreshToken(refreshToken);
 
-    const response = h.response({
-      status: 'success',
-      message: 'Authentication berhasil ditambahkan',
-      data: { accessToken, refreshToken },
-    });
+      const response = h.response({
+        status: 'success',
+        message: 'Authentication berhasil ditambahkan',
+        data: { accessToken, refreshToken },
+      });
 
-    response.code(201);
-    return response;
+      response.code(201);
+      return response;
+    } catch (error) {
+      if (error instanceof ClientError) {
+        throw error;
+      }
+
+      // Server Error
+      const response = h.response({
+        status: 'error',
+        message: 'Maaf, terjadi kesalahan pada server kami.',
+      });
+
+      response.code(500);
+      console.error(error);
+      return response;
+    }
   }
 
-  async putAuthenticationHandler(request) {
-    this._validator.validatePutAuthenticationPayload(request.payload);
+  async putAuthenticationHandler(request, h) {
+    try {
+      this._validator.validatePutAuthenticationPayload(request.payload);
 
-    const { refreshToken } = request.payload;
-    await this._authenticationsService.verifyRefreshToken(refreshToken);
+      const { refreshToken } = request.payload;
+      await this._authenticationsService.verifyRefreshToken(refreshToken);
 
-    const { id } = this._tokenManager.verifyRefreshToken(refreshToken);
-    const accessToken = this._tokenManager.generateAccessToken({ id });
+      const { id } = this._tokenManager.verifyRefreshToken(refreshToken);
+      const accessToken = this._tokenManager.generateAccessToken({ id });
 
-    return {
-      status: 'success',
-      message: 'Authentication berhasil diperbarui',
-      data: { accessToken },
-    };
+      return {
+        status: 'success',
+        message: 'Authentication berhasil diperbarui',
+        data: { accessToken },
+      };
+    } catch (error) {
+      if (error instanceof ClientError) {
+        throw error;
+      }
+
+      // Server Error
+      const response = h.response({
+        status: 'error',
+        message: 'Maaf, terjadi kesalahan pada server kami.',
+      });
+
+      response.code(500);
+      console.error(error);
+      return response;
+    }
   }
 
-  async deleteAuthenticationHandler(request) {
-    this._validator.validateDeleteAuthenticationPayload(request.payload);
+  async deleteAuthenticationHandler(request, h) {
+    try {
+      this._validator.validateDeleteAuthenticationPayload(request.payload);
 
-    const { refreshToken } = request.payload;
-    await this._authenticationsService.verifyRefreshToken(refreshToken);
-    await this._authenticationsService.deleteRefreshToken(refreshToken);
+      const { refreshToken } = request.payload;
+      await this._authenticationsService.verifyRefreshToken(refreshToken);
+      await this._authenticationsService.deleteRefreshToken(refreshToken);
 
-    return {
-      status: 'success',
-      message: 'Refresh token berhasil dihapus',
-    };
+      return {
+        status: 'success',
+        message: 'Refresh token berhasil dihapus',
+      };
+    } catch (error) {
+      if (error instanceof ClientError) {
+        throw error;
+      }
+
+      // Server Error
+      const response = h.response({
+        status: 'error',
+        message: 'Maaf, terjadi kesalahan pada server kami.',
+      });
+
+      response.code(500);
+      console.error(error);
+      return response;
+    }
   }
 }
 
