@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 const Hapi = require('@hapi/hapi');
 const Jwt = require('@hapi/jwt');
 
@@ -22,6 +21,11 @@ const playlists = require('./api/playlists');
 const PlaylistsService = require('./services/postgres/PlaylistsService');
 const PlaylistsValidator = require('./validation/playlist');
 
+// collaboration
+const collaborations = require('./api/collaborations');
+const CollaborationsService = require('./services/postgres/CollaborationsService');
+const CollaborationsValidator = require('./validation/collaborations');
+
 // tokenize
 const TokenManager = require('./tokenize/TokenManager');
 
@@ -35,6 +39,7 @@ const init = async () => {
   const usersService = new UsersService();
   const authenticationsService = new AuthenticationsService();
   const playlistsService = new PlaylistsService();
+  const collaborationsService = new CollaborationsService();
 
   const server = Hapi.Server({
     port: process.env.PORT,
@@ -101,30 +106,27 @@ const init = async () => {
         validator: PlaylistsValidator,
       },
     },
+    {
+      plugin: collaborations,
+      options: {
+        collaborationsService,
+        playlistsService,
+        validator: CollaborationsValidator,
+      },
+    },
   ]);
 
-  // use hapi lifecycle to handling Error
+  // use hapi lifecycle to handling ClientError
   server.ext('onPreResponse', (request, h) => {
     const { response } = request;
 
-    let newResponse = null;
     if (response instanceof ClientError) {
-      newResponse = h.response({
+      const newResponse = h.response({
         status: 'fail',
         message: response.message,
       });
+
       newResponse.code(response.statusCode);
-    } else if (response instanceof Error) {
-      newResponse = h.response({
-        status: 'error',
-        message: 'Maaf, terjadi kegagalan pada server kami.',
-      });
-
-      newResponse.code(500);
-      console.error(response);
-    }
-
-    if (newResponse) {
       return newResponse;
     }
 
