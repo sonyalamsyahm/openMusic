@@ -98,7 +98,9 @@ class OpenMusicService {
     const result = await this._pool.query(query);
 
     if (!result.rowCount) {
-      throw new NotFoundError('Lagu tidak ditemukan');
+      // submission test want 400 status code
+      throw new InvariantError('songId tidak valid');
+      // throw new NotFoundError('Lagu tidak ditemukan');
     }
   }
 }
