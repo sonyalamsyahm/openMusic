@@ -49,8 +49,8 @@ class PlaylistsHandler {
 
   async getPlaylistsHandler(request, h) {
     try {
-      const { id: owner } = request.auth.credentials;
-      const playlists = await this._playlistsService.getPlaylists(owner);
+      const { id: credentialId } = request.auth.credentials;
+      const playlists = await this._playlistsService.getPlaylists(credentialId);
       return {
         status: 'success',
         data: { playlists },
@@ -75,9 +75,9 @@ class PlaylistsHandler {
   async deletePlaylistsHandler(request, h) {
     try {
       const { playlistId: id } = request.params;
-      const { id: owner } = request.auth.credentials;
+      const { id: credentialId } = request.auth.credentials;
 
-      await this._playlistsService.verifyPlaylistOwner(id, owner);
+      await this._playlistsService.verifyPlaylistOwner(id, credentialId);
       await this._playlistsService.deletePlaylistById(id);
 
       return {
@@ -104,16 +104,20 @@ class PlaylistsHandler {
   async postPlaylistAddSongHandler(request, h) {
     try {
       this._validator.PostPlaylistAddSongValidator(request.payload);
-      const { playlistId: id } = request.params;
+      const { playlistId } = request.params;
       const { songId } = request.payload;
-      const { id: owner } = request.auth.credentials;
+      const { id: credentialId } = request.auth.credentials;
 
       // verify only owner (sementara) to add song to playlist
-      await this._playlistsService.verifyPlaylistOwner(id, owner);
+      // await this._playlistsService.verifyPlaylistOwner(playlistId, credentialId);
+
+      // owner & collaboration verify to add song
+      await this._playlistsService.verifyPlaylistAccess(playlistId, credentialId);
+
       // check apakah lagu ada di db songs
       await this._songsService.verifySong(songId);
       // apabila tidak ada error -> lagu ada dan bisa dimasukkan kedalam playlist
-      await this._playlistsService.addSongToPlaylist({ playlistId: id, songId });
+      await this._playlistsService.addSongToPlaylist({ playlistId, songId });
 
       /* karena songId merupakan contraint fk dari songs(id) sebenarnya datanya tidak akan masuk
       karena data song(id) tidak ada, tetapi disini dibuat verifySong untuk
@@ -144,11 +148,12 @@ class PlaylistsHandler {
 
   async getPlaylistSongsByPlaylistId(request, h) {
     try {
-      const { playlistId: id } = request.params;
-      const { id: owner } = request.auth.credentials;
+      const { playlistId } = request.params;
+      const { id: credentialId } = request.auth.credentials;
 
-      await this._playlistsService.verifyPlaylistOwner(id, owner);
-      const songs = await this._playlistsService.getSongsByPlaylistId(id);
+      // await this._playlistsService.verifyPlaylistOwner(id, credentialId);
+      await this._playlistsService.verifyPlaylistAccess(playlistId, credentialId);
+      const songs = await this._playlistsService.getSongsByPlaylistId(playlistId);
 
       return {
         status: 'success',
@@ -176,12 +181,13 @@ class PlaylistsHandler {
       this._validator.DeletePlaylistSongValidator(request.payload);
 
       const { songId } = request.payload;
-      const { playlistId: id } = request.params;
-      const { id: owner } = request.auth.credentials;
+      const { playlistId } = request.params;
+      const { id: credentialId } = request.auth.credentials;
 
-      await this._playlistsService.verifyPlaylistOwner(id, owner);
+      // await this._playlistsService.verifyPlaylistOwner(playlistId, credentialId);
+      await this._playlistsService.verifyPlaylistAccess(playlistId, credentialId);
       await this._songsService.verifySong(songId);
-      await this._playlistsService.deletePlaylistSongBySongId({ playlistId: id, songId });
+      await this._playlistsService.deletePlaylistSongBySongId({ playlistId, songId });
 
       return {
         status: 'success',
