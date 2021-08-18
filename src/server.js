@@ -35,11 +35,11 @@ const ClientError = require('./exception/ClientError');
 require('dotenv').config();
 
 const init = async () => {
+  const collaborationsService = new CollaborationsService();
   const openMusicService = new OpenMusicService();
   const usersService = new UsersService();
   const authenticationsService = new AuthenticationsService();
-  const playlistsService = new PlaylistsService();
-  const collaborationsService = new CollaborationsService();
+  const playlistsService = new PlaylistsService(collaborationsService);
 
   const server = Hapi.Server({
     port: process.env.PORT,
